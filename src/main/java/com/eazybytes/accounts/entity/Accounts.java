@@ -5,13 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Accounts {
+@EqualsAndHashCode(callSuper=false)
+public class Accounts extends BaseEntity{
     @Column(name = "customer_id")
     private long customerId;
     @Id
