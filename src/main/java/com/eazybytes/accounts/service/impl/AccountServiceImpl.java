@@ -92,6 +92,21 @@ public class AccountServiceImpl implements IAccountService {
         return false;
     }
 
+    @Override
+    public Boolean deleteAccount(String mobileNumber) {
+        if (mobileNumber.length() > 0) {
+            Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber(mobileNumber);
+            if (!optionalCustomer.isPresent()) {
+                throw new ResourceNotFoundException("customer", "mobileNumber", mobileNumber);
+            }
+            Customer customer = optionalCustomer.get();
+            accountRepository.deleteByCustomerId(customer.getCustomerId());
+            customerRepository.deleteById(customer.getCustomerId());
+            return true;
+        }
+        return false;
+    }
+
     /**
      * creating new account for existing customer
      *
