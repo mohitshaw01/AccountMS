@@ -14,6 +14,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +35,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @Validated
 @Tag(name = "Accounts", description = "Accounts APIs")
+@NoArgsConstructor
 public class AccountsController {
 
     private IAccountService iAccountService;
+
+    @Value("${build.version}")
+    private String buildVersion;
+
+    private Environment environment;
 
     @GetMapping("/health")
     public String health() {
@@ -56,10 +65,9 @@ public class AccountsController {
     @PutMapping("/updateAccount")
     public ResponseEntity<ResponseDto> updateAccount(@RequestBody CustomerDto customerDto) {
         Boolean isUpdated = iAccountService.updateAccount(customerDto);
-        if(isUpdated){
+        if (isUpdated) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(AccountConstants.MESSAGE_200, AccountConstants.STATUS_200));
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(AccountConstants.MESSAGE_417_UPDATE, AccountConstants.STATUS_417));
         }
     }
@@ -90,11 +98,62 @@ public class AccountsController {
     @DeleteMapping("/deleteAccount")
     public ResponseEntity<ResponseDto> deleteAccount(@RequestParam String mobileNumber) {
         Boolean isDeleted = iAccountService.deleteAccount(mobileNumber);
-        if(isDeleted){
+        if (isDeleted) {
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto(AccountConstants.MESSAGE_200, AccountConstants.STATUS_200));
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(AccountConstants.MESSAGE_417_DELETE, AccountConstants.STATUS_417));
         }
+    }
+
+    @Operation(
+            summary = "Build Version REST API",
+            description = "REST API to get the build version of the application"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "Expectation Failed"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )
+    }
+    )
+
+    @GetMapping("/version")
+    public ResponseEntity<String> buildVersion() {
+        return ResponseEntity.status(HttpStatus.OK).body(buildVersion);
+    }
+
+    @Operation(
+            summary = "Java Version REST API",
+            description = "REST API to get the java version of the application"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "417",
+                    description = "Expectation Failed"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
+                    ))
+    })
+    @GetMapping("/java-version")
+    public ResponseEntity<String> env() {
+        return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("MAVEN_HOME"));
     }
 }
