@@ -1,10 +1,12 @@
 package com.eazybytes.accounts;
 
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.License;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
@@ -28,6 +30,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 )
 @EnableJpaAuditing(auditorAwareRef = "AuditAwareImpl")
 // this is telling to enable JPA Auditing for the application used for createdBy and lastModifiedBy in the entities
+@EnableConfigurationProperties(value = AccountsContactInfoDto.class)
+// enable config to read values from application.yml file
 public class AccountsApplication {
 
     public static void main(String[] args) {

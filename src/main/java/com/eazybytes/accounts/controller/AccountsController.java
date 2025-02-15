@@ -1,6 +1,7 @@
 package com.eazybytes.accounts.controller;
 
 import com.eazybytes.accounts.constants.AccountConstants;
+import com.eazybytes.accounts.dto.AccountsContactInfoDto;
 import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.ResponseDto;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -32,9 +34,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/api/v1", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 @Tag(name = "Accounts", description = "Accounts APIs")
+@AllArgsConstructor
 @NoArgsConstructor
 public class AccountsController {
 
@@ -43,7 +45,11 @@ public class AccountsController {
     @Value("${build.version}")
     private String buildVersion;
 
+    @Autowired
     private Environment environment;
+
+    @Autowired
+    private AccountsContactInfoDto accountsContactInfoDto;
 
     @GetMapping("/health")
     public String health() {
@@ -152,8 +158,14 @@ public class AccountsController {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)
                     ))
     })
+
     @GetMapping("/java-version")
     public ResponseEntity<String> env() {
         return ResponseEntity.status(HttpStatus.OK).body(environment.getProperty("MAVEN_HOME"));
+    }
+
+    @GetMapping("/accountContacts")
+    public ResponseEntity<?> accountContacts() {
+        return ResponseEntity.status(HttpStatus.OK).body(accountsContactInfoDto);
     }
 }

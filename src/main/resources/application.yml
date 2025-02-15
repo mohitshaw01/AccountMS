@@ -17,3 +17,17 @@ spring:
 
 build:
   version: "1.0"
+
+account:
+  message : "welcome to account service"
+  contact:
+    - email: "8M5lG@example.com"
+    - phone: "1234567890"
+  address:
+    street: "street"
+    city: "city"
+    state: "state"
+    zip: "12345"
+  onCallSupport :
+    - email: "8M5lG@example.com"
+    - phone: "1234567890"
